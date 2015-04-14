@@ -141,9 +141,7 @@ function prefsChanged () {
 	flPrefsChanged = true;
 	}
 function settingsCommand () {
-	twStorageToPrefs (appPrefs, function () {
-		prefsDialogShow ();
-		});
+	twStorageToPrefs (appPrefs, prefsDialogShow);
 	}
 function initMenus () {
 	var cmdKeyPrefix = getCmdKeyPrefix (); //10/6/14 by DW
@@ -174,8 +172,20 @@ var tick = function (target) {
   return function () { 
 		//console.log("ticker set");
 		self.setInterval (target, 1000)
+		};
 	};
-};
+function countStartups() {
+	appPrefs.cdStartups++;
+	};
+function rejoice() {
+	showHideEditor ();
+	countStartups ();
+	prefsChanged ();
+	applyPrefs ();
+	//twStorageData.twitterConfig will have information from twitter.com
+	twGetTwitterConfig ( tick (everySecond));
+	};
+
 function startup () {
 	console.log ("startup");
 	twStorageData.urlTwitterServer = appConsts.urlTwitterServer;
@@ -189,17 +199,11 @@ function startup () {
 		twStorageStartup (appPrefs, function (flGoodStart) {
 			flStartupFail = !flGoodStart;
 			if (flGoodStart) {
-				getTextFile (function () {
-					showHideEditor ();
-					appPrefs.ctStartups++;
-					prefsChanged ();
-					applyPrefs ();
-					//twStorageData.twitterConfig will have information from twitter.com
-					twGetTwitterConfig ( tick (everySecond));
-				});
-			}
-		});
-	} else {
+				getTextFile (rejoice);
+				}
+			});
+		} 
+	else {
 		showHideEditor ();
-	}
-};
+		}
+	};
