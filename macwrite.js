@@ -24,7 +24,7 @@ var appConsts = {
 	productname: "MacWrite",
 	productnameForDisplay: "MacWrite",
 	"description": "Demo app for nodeStorage.io.",
-	urlTwitterServer: "http://macwrite2.nodestorage.io/", //change this to point to your nodeStorage server
+	urlTwitterServer: "http://ns-rsbohn-2015.herokuapp.com/", //change this to point to your nodeStorage server
 	domain: "macwrite.org", 
 	version: "0.47"
 	}
@@ -169,6 +169,13 @@ function everySecond () {
 		flPrefsChanged = false;
 		}
 	}
+var tick = function (target) {
+  //console.log("ticker build");
+  return function () { 
+		//console.log("ticker set");
+		self.setInterval (target, 1000)
+	};
+};
 function startup () {
 	console.log ("startup");
 	twStorageData.urlTwitterServer = appConsts.urlTwitterServer;
@@ -187,14 +194,12 @@ function startup () {
 					appPrefs.ctStartups++;
 					prefsChanged ();
 					applyPrefs ();
-					twGetTwitterConfig (function () { //twStorageData.twitterConfig will have information from twitter.com
-						self.setInterval (function () {everySecond ()}, 1000); 
-						});
-					});
-				}
-			});
-		}
-	else {
+					//twStorageData.twitterConfig will have information from twitter.com
+					twGetTwitterConfig ( tick (everySecond));
+				});
+			}
+		});
+	} else {
 		showHideEditor ();
-		}
 	}
+};
