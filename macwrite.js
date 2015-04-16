@@ -98,12 +98,18 @@ function getText () {
 function setText (s) {
 	$("#idTextArea").val (s);
 	}
+
 function saveButtonClick () {
+	save(myTextFilename, getText ());
+	}
+
+function save(filename, s) {
 	var now = new Date ();
-	twUploadFile (myTextFilename, getText (), "text/plain", true, function (data) {
+	twUploadFile (filename, s, "text/plain", true, function (data) {
 		console.log ("saveButtonClick: " + data.url + " (" + secondsSince (now) + " seconds)");
 		});
 	}
+
 function getTextFile (callback) {
 	twGetFile (myTextFilename, true, true, function (error, data) {
 		if (data != undefined) {
